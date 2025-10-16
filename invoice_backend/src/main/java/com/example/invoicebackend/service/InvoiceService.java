@@ -23,17 +23,20 @@ public class InvoiceService {
     private final PartnerRepository partners;
     private final CustomerRepository customers;
     private final TemplateRepository templates;
+    private final WebhookService webhookService;
 
     public InvoiceService(InvoiceRepository invoices,
                           InvoiceItemRepository itemsRepo,
                           PartnerRepository partners,
                           CustomerRepository customers,
-                          TemplateRepository templates) {
+                          TemplateRepository templates,
+                          WebhookService webhookService) {
         this.invoices = invoices;
         this.itemsRepo = itemsRepo;
         this.partners = partners;
         this.customers = customers;
         this.templates = templates;
+        this.webhookService = webhookService;
     }
 
     // PUBLIC_INTERFACE
@@ -78,7 +81,10 @@ public class InvoiceService {
         inv.recalcTotals();
         DtoMappers.normalizeMoney(inv);
 
-        return invoices.save(inv);
+        Invoice saved = invoices.save(inv);
+        // Publish event for created invoice in DRAFT (status change considered from null->DRAFT)
+        webhookService.publishInvoiceStatusChange(saved);
+        return saved;
     }
 
     // PUBLIC_INTERFACE
@@ -86,6 +92,8 @@ public class InvoiceService {
     public Invoice update(Long id, InvoiceUpdateRequest req) {
         /** Update invoice; if items provided, replace list. Recalc totals. */
         Invoice inv = invoices.findById(id).orElseThrow(() -> new IllegalArgumentException("Invoice not found"));
+
+        InvoiceStatus before = inv.getStatus();
 
         // Basic field updates
         DtoMappers.applyInvoiceUpdateFromRequest(inv, req);
@@ -105,6 +113,11 @@ public class InvoiceService {
         // Recompute totals every update
         inv.recalcTotals();
         DtoMappers.normalizeMoney(inv);
+
+        // If status changed, publish
+        if (before != inv.getStatus()) {
+            webhookService.publishInvoiceStatusChange(inv);
+        }
         return inv;
     }
 

@@ -68,6 +68,8 @@ public class SecurityConfig {
                 .requestMatchers("/", "/health", "/docs", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/api-docs/**").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/demo/public").permitAll()
+                // Incoming webhooks should be reachable without JWT; protect via signature verification at controller level
+                .requestMatchers(HttpMethod.POST, "/api/webhooks/**").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
