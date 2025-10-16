@@ -47,4 +47,4 @@ public class HelloController {
     public String info() {
         return "Spring Boot Application: invoicebackend";
     }
-} 
+}
