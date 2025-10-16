@@ -3,6 +3,7 @@ package com.example.invoicebackend.web;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/api/demo")
+@Validated
 @Tag(name = "Demo", description = "Demo endpoints for verifying auth and RBAC")
 public class DemoSecureController {
 

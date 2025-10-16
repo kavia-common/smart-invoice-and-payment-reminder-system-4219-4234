@@ -4,6 +4,7 @@ import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.*;
+import io.swagger.v3.oas.models.tags.Tag;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -30,6 +31,12 @@ public class OpenApiConfig {
                         .title("Invoice Backend API")
                         .version("0.1.0")
                         .description("Smart Invoice & Payment Reminder System - Backend"))
-                .addSecurityItem(new SecurityRequirement().addList(schemeName));
+                .addSecurityItem(new SecurityRequirement().addList(schemeName))
+                .addTagsItem(new Tag().name("Authentication").description("Auth endpoints for registration, login, and refresh"))
+                .addTagsItem(new Tag().name("Partners").description("Partner management endpoints"))
+                .addTagsItem(new Tag().name("Templates").description("Template CRUD endpoints"))
+                .addTagsItem(new Tag().name("Invoices").description("Invoice CRUD and search endpoints"))
+                .addTagsItem(new Tag().name("Demo").description("Demo endpoints for verifying auth and RBAC"))
+                .addTagsItem(new Tag().name("Security").description("Spring Security configuration for JWT and RBAC"));
     }
 }

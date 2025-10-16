@@ -6,7 +6,12 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 
 import java.time.Instant;
 import java.util.HashMap;
@@ -48,6 +53,29 @@ public class GlobalExceptionHandler {
         }
         map.put("fields", fieldErrors);
         return ResponseEntity.badRequest().body(map);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<Map<String, Object>> handleConstraintViolation(ConstraintViolationException ex) {
+        Map<String, Object> map = body(HttpStatus.BAD_REQUEST, "Constraint violation");
+        Map<String, String> fieldErrors = new HashMap<>();
+        for (ConstraintViolation<?> v : ex.getConstraintViolations()) {
+            fieldErrors.put(v.getPropertyPath().toString(), v.getMessage());
+        }
+        map.put("fields", fieldErrors);
+        return ResponseEntity.badRequest().body(map);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<Map<String, Object>> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
+        String msg = String.format("Parameter '%s' has invalid value '%s'", ex.getName(), ex.getValue());
+        return ResponseEntity.badRequest().body(body(HttpStatus.BAD_REQUEST, msg));
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<Map<String, Object>> handleMissingParam(MissingServletRequestParameterException ex) {
+        String msg = String.format("Missing required parameter '%s'", ex.getParameterName());
+        return ResponseEntity.badRequest().body(body(HttpStatus.BAD_REQUEST, msg));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
