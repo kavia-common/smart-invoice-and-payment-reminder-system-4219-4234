@@ -1,5 +1,6 @@
 plugins {
 	id 'java'
+	id 'checkstyle'
 	id 'org.springframework.boot' version '3.4.8'
 	id 'io.spring.dependency-management' version '1.1.7'
 }
@@ -22,12 +23,35 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+	// Flyway for database migrations
+	implementation 'org.flywaydb:flyway-core'
+
+	// Keep H2 for development profile
 	runtimeOnly 'com.h2database:h2'
+
+	// PostgreSQL driver for production profile
+	runtimeOnly 'org.postgresql:postgresql'
+
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+checkstyle {
+	toolVersion = '10.17.0'
+	configFile = file("$projectDir/config/checkstyle/checkstyle.xml")
+	// Do not fail the build in this MVP stage; CI can be adjusted later
+	ignoreFailures = true
+}
+
+tasks.withType(Checkstyle) {
+	reports {
+		xml.required = false
+		html.required = true
+	}
 }
