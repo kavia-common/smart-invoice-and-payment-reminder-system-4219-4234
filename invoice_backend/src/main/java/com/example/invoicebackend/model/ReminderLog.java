@@ -31,6 +31,9 @@ public class ReminderLog {
     @Column(name = "error_message")
     private String errorMessage;
 
+    @Column(name = "target")
+    private String target;
+
     @Column(name = "sent_at")
     private Instant sentAt;
 
@@ -61,4 +64,7 @@ public class ReminderLog {
     public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
     public Instant getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(Instant updatedAt) { this.updatedAt = updatedAt; }
+
+    public String getTarget() { return target; }
+    public void setTarget(String target) { this.target = target; }
 }
