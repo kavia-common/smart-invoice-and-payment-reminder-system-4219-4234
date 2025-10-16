@@ -19,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 /**
  * Configures Spring Security for stateless JWT authentication and RBAC.
@@ -59,12 +60,15 @@ public class SecurityConfig {
     // PUBLIC_INTERFACE
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
-                                                   JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
-        /** Configure HTTP security with JWT filter and stateless sessions. */
+                                                   JwtAuthenticationFilter jwtAuthenticationFilter,
+                                                   CorsConfigurationSource corsConfigurationSource) throws Exception {
+        /** Configure HTTP security with JWT filter and stateless sessions with CORS enabled. */
         http
             .csrf(csrf -> csrf.disable())
+            .cors(cors -> cors.configurationSource(corsConfigurationSource))
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // allow preflight
                 .requestMatchers("/", "/health", "/docs", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/api-docs/**").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/demo/public").permitAll()

@@ -86,7 +86,7 @@ public class WebhooksController {
                     content = @Content(schema = @Schema(implementation = PaymentUpdatedWebhookRequest.class))
             )
             @Valid @RequestBody PaymentUpdatedWebhookRequest payload,
-            @Parameter(name = "X-Signature", in = ParameterIn.HEADER, description = "Signature header", required = false)
+            @Parameter(name = "X-Signature", description = "Signature header (optional)", required = false)
             @RequestHeader(value = "X-Signature", required = false) String signature,
             HttpServletRequest request
     ) throws IOException {
