@@ -37,6 +37,7 @@ public class OpenApiConfig {
                 .addTagsItem(new Tag().name("Templates").description("Template CRUD endpoints"))
                 .addTagsItem(new Tag().name("Invoices").description("Invoice CRUD and search endpoints"))
                 .addTagsItem(new Tag().name("Demo").description("Demo endpoints for verifying auth and RBAC"))
-                .addTagsItem(new Tag().name("Security").description("Spring Security configuration for JWT and RBAC"));
+                .addTagsItem(new Tag().name("Security").description("Spring Security configuration for JWT and RBAC"))
+                .addTagsItem(new Tag().name("Files").description("File upload/download endpoints"));
     }
 }

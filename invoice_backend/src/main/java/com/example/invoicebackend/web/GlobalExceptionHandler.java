@@ -88,4 +88,10 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(body(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error"));
     }
+
+    @ExceptionHandler({org.springframework.web.multipart.MaxUploadSizeExceededException.class})
+    public ResponseEntity<Map<String, Object>> handleUploadTooLarge(Exception ex) {
+        return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE)
+                .body(body(HttpStatus.PAYLOAD_TOO_LARGE, "Uploaded file too large"));
+    }
 }
